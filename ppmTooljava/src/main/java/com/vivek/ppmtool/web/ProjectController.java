@@ -28,6 +28,7 @@ public class ProjectController {
         if(result.hasErrors()){
            return mapValiErrorService.mapValidateService(result);
         }
+        project.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
         return new ResponseEntity<Project>(projectService.save(project), HttpStatus.CREATED);
 
     }
