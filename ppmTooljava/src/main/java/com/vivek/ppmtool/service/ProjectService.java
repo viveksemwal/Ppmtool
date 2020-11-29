@@ -4,8 +4,10 @@ import com.vivek.ppmtool.domain.Project;
 import com.vivek.ppmtool.exception.ProjectIdException;
 import com.vivek.ppmtool.repository.ProjectRepository;
 import lombok.AllArgsConstructor;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,5 +23,24 @@ public class ProjectService {
         }
 
 
+    }
+
+    public Project findByIdentifier(String s){
+        return projectRepository.findByProjectIdentifier(s.toUpperCase()).orElseThrow(()-> new ProjectIdException("Not Found"));
+    }
+
+    public List<Project> findAll(){
+        List<Project> projects=projectRepository.findAll();
+        if(projects.isEmpty()){
+            throw new ProjectIdException("No project yet stored");
+        }
+        return projects;
+    }
+
+
+    public Project delete(String s){
+        Project project=projectRepository.findByProjectIdentifier(s.toUpperCase()).orElseThrow(()-> new ProjectIdException("Not Found"));
+        projectRepository.delete(project);
+        return project;
     }
 }

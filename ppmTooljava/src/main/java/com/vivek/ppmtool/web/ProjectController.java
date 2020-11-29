@@ -8,10 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.*;
@@ -24,7 +21,9 @@ public class ProjectController {
     private final MapValiErrorService mapValiErrorService;
 
     @PostMapping("")
-    public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result){
+    public ResponseEntity<?> createAndUpdate(@Valid @RequestBody Project project, BindingResult result){
+
+        //to Update you just need to give the ID in Json Payload
         if(result.hasErrors()){
            return mapValiErrorService.mapValidateService(result);
         }
@@ -32,4 +31,20 @@ public class ProjectController {
         return new ResponseEntity<Project>(projectService.save(project), HttpStatus.CREATED);
 
     }
+
+    @GetMapping("/{projectId}")
+    public ResponseEntity<?> getprojectByIdentifier(@PathVariable String projectId){
+        return new ResponseEntity<Project>(projectService.findByIdentifier(projectId), HttpStatus.OK);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<?> findALl(){
+        return new ResponseEntity<List<Project>>(projectService.findAll(),HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{projectId}")
+    public ResponseEntity<?> deleteByIdentifier(@PathVariable String projectId){
+        return new ResponseEntity<Project>(projectService.delete(projectId), HttpStatus.OK);
+    }
+
 }
