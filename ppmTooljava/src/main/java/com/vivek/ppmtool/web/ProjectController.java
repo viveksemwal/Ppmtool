@@ -1,6 +1,7 @@
 package com.vivek.ppmtool.web;
 
 import com.vivek.ppmtool.domain.Project;
+import com.vivek.ppmtool.service.MapValiErrorService;
 import com.vivek.ppmtool.service.ProjectService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,19 +21,12 @@ import java.util.*;
 @AllArgsConstructor
 public class ProjectController {
     private final ProjectService projectService;
+    private final MapValiErrorService mapValiErrorService;
 
     @PostMapping("")
     public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result){
         if(result.hasErrors()){
-
-            Map<String,String> errorMap=new HashMap<>();
-            for (FieldError fe: result.getFieldErrors()) {
-                errorMap.put(fe.getField(), fe.getDefaultMessage());
-
-            }
-
-
-            return new ResponseEntity< Map<String,String>>( errorMap,HttpStatus.BAD_REQUEST);
+           return mapValiErrorService.mapValidateService(result);
         }
         return new ResponseEntity<Project>(projectService.save(project), HttpStatus.CREATED);
 
